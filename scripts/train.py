@@ -100,23 +100,13 @@ def train():
     elif args.loss == 'dice':
         def lossfunc(y_true, y_pred):
             return loss.sorensen_dice_loss(y_true, y_pred, args.loss_weights)
-    elif args.loss == 'jaccard':
-        def lossfunc(y_true, y_pred):
-            return loss.jaccard_loss(y_true, y_pred, args.loss_weights)
-    else:
-        raise Exception("Unknown loss ({})".format(args.loss))
 
     def dice(y_true, y_pred):
         batch_dice_coefs = loss.sorensen_dice(y_true, y_pred, axis=[1, 2])
         dice_coefs = K.mean(batch_dice_coefs, axis=0)
         return dice_coefs[1]    # HACK for 2-class case
 
-    def jaccard(y_true, y_pred):
-        batch_jaccard_coefs = loss.jaccard(y_true, y_pred, axis=[1, 2])
-        jaccard_coefs = K.mean(batch_jaccard_coefs, axis=0)
-        return jaccard_coefs[1] # HACK for 2-class case
-
-    metrics = ['accuracy', dice, jaccard]
+    metrics = ['accuracy', dice]
 
     m.compile(optimizer=optimizer, loss=lossfunc, metrics=metrics)
 
@@ -131,11 +121,6 @@ def train():
             filepath = os.path.join(
                 args.outdir, "weights-{epoch:02d}-{val_dice:.4f}.hdf5")
             monitor='val_dice'
-            mode = 'max'
-        elif args.loss == 'jaccard':
-            filepath = os.path.join(
-                args.outdir, "weights-{epoch:02d}-{val_jaccard:.4f}.hdf5")
-            monitor='val_jaccard'
             mode = 'max'
         checkpoint = ModelCheckpoint(
             filepath, monitor=monitor, verbose=1,
