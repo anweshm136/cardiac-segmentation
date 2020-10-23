@@ -24,8 +24,6 @@ def select_optimizer(optimizer_name, optimizer_args):
         'adamax': Adamax,
         'nadam': Nadam,
     }
-    if optimizer_name not in optimizers:
-        raise Exception("Unknown optimizer ({}).".format(name))
 
     return optimizers[optimizer_name](**optimizer_args)
 
@@ -92,7 +90,6 @@ def train():
     optimizer = select_optimizer(args.optimizer, optimizer_args)
 
     # select loss function: pixel-wise crossentropy, soft dice or soft
-    # jaccard coefficient
     if args.loss == 'pixel':
         def lossfunc(y_true, y_pred):
             return loss.weighted_categorical_crossentropy(

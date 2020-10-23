@@ -118,7 +118,7 @@ class PatientData(object):
             self.endocardium_masks.append(inner_mask)
             outer_mask = self.contour_to_mask(outer_x, outer_y, norm=1)
             self.epicardium_masks.append(outer_mask)
-            
+    """        
     def write_video(self, outfile, FPS=24):
         import cv2
         image_dims = (self.image_width, self.image_height)
@@ -127,4 +127,5 @@ class PatientData(object):
             grayscale = np.asarray(image * (255 / image.max()), dtype='uint8')
             video.write(cv2.cvtColor(grayscale, cv2.COLOR_GRAY2BGR))
         video.release()
+    """
 
